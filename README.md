@@ -2,8 +2,8 @@
 
 To run the skeleton code, open *three* command prompts in the repo directory and run these commands in order, one in each repo:
 
-python Server.py
-python Receiver.py
+python Server.py  
+python Receiver.py  
 python Sender.py
 
 There are several functions in each file that are "blocking" i.e. execution of whatever python file it is in pauses until the blocking function executes. I have commented each blocking function so we can better trace the flow of execution.
