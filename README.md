@@ -1,4 +1,4 @@
-# ProjectX
+# SecureSay
 
 To run the skeleton code, open *three* command prompts in the repo directory and run these commands in order, one in each repo:
 
