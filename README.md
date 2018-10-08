@@ -18,3 +18,4 @@ Additional documentation reference: https://docs.python.org/3/library/socket.htm
 
 ### Encryption/Decryption Techniques
 * [Caesar Cipher](https://inventwithpython.com/chapter14.html)
+* [Substitution Cipher](https://inventwithpython.com/hacking/chapter17.html)
