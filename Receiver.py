@@ -1,3 +1,5 @@
+# Receiver prints out the message from Sender
+
 from socket import *
 
 serverName = 'localhost'
@@ -12,20 +14,14 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverName, serverPort))
 
 print("Ready to receive.")
+while True:
+    # execution pauses here until message is received from the server
+    # (Server.py line 34)
+    response, serverAddress = clientSocket.recvfrom(1024)
 
-packets = 0
-while packets < 10:
-    # receives sender message and responses with acknowledgement
-    # execution pauses here until something is received from the server
-    # (Router.py line 35)
-    message, serverAddress = clientSocket.recvfrom(1024)
-
-    # modifies message
-    response = 'Acknowledged: ' + str(packets)
-
-    # sends the modified message back to the server
-    clientSocket.send(response.encode())
-    packets += 1
+    # message response must be decoded before it can be printed
+    print("You got mail: " + "'" + response.decode() + "'")
+    break;
     
 # closes the socket connection
 clientSocket.close()

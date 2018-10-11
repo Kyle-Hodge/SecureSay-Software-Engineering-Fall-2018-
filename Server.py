@@ -24,24 +24,17 @@ print("Receiver connection established")
 sender_socket, addr2 = server_socket.accept()
 print("Sender connection established")
 
-packets = 0
-while packets < 10:
-    # receives a packet from sender client
+while True:
+    # receives a message from sender client
     # execution pauses here until something is received from the sender
     # (Sender.py line 17)
     message = sender_socket.recv(1024)
 
-    # forwards packet to the receiver
+    # forwards message to the receiver
     receiver_socket.send(message)
 
-    # receives a message from the receiver
-    # execution pauses here until a message is received
-    # (Receiver.py line 27)
-    reply = receiver_socket.recv(1024)
-
-    # sends the message back to the sender
-    sender_socket.send(reply)
-    packets += 1
+    
+    break;
 
 # closes all socket connections
 receiver_socket.close()
