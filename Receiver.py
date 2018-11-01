@@ -58,7 +58,7 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverName, serverPort))
 
 # display login GUI
-login_window()
+#login_window()
 
 print("Ready to receive.")
 while True:

@@ -54,7 +54,7 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverName, serverPort))
 
 # display login GUI
-login_window()
+#login_window()
 
 # User input
 messageSend = input("Type in Message: ")
