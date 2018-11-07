@@ -24,24 +24,24 @@ def login_window():
     pwd_entry.grid(column = 1, row = 1)
 
     # checks if the credentials are correct
-    def clicked():
+    def login_press():
         entered_username = user_entry.get()
         entered_password = pwd_entry.get()
         res = ""
 
+        # this conditional will need to be changed to fetch account credentials from database
         if entered_username != "test" or entered_password != "12345":
             res = "Invalid credentials."
             result_label.configure(text = res)
         else:
             res = "Successful login!"
-            window.quit() # exits the login window
+            window.destroy() # exits the login window
             return
         result_label.configure(text = res)
 
     # creates the button to analyze the input
-    btn = Button(window, text = "Login", command = clicked)
+    btn = Button(window, text = "Login", command = login_press)
     btn.grid(column = 2, row = 1)
-
     window.mainloop()
 
 serverName = 'localhost'
@@ -54,7 +54,7 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverName, serverPort))
 
 # display login GUI
-#login_window()
+login_window()
 
 # User input
 messageSend = input("Type in Message: ")
