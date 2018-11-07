@@ -1,5 +1,6 @@
 from socket import *
 from tkinter import *
+import DatabasePlus
 
 def login_window():
     # create the main login window
@@ -30,13 +31,13 @@ def login_window():
         res = ""
 
         # this conditional will need to be changed to fetch account credentials from database
-        if entered_username != "test" or entered_password != "12345":
-            res = "Invalid credentials."
-            result_label.configure(text = res)
-        else:
+        if DatabasePlus.get_name(entered_username, entered_password):
             res = "Successful login!"
             window.destroy() # exits the login window
             return
+        else:
+            res = "Invalid credentials. Please try again."
+            result_label.configure(text = res)
         result_label.configure(text = res)
 
     # creates the button to analyze the input
