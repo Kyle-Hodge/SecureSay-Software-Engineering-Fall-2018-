@@ -10,33 +10,19 @@ server_socket = socket(AF_INET, SOCK_STREAM)
 server_socket.bind(('', serverPort))
 
 # sets server to maintain two TCP connections
-server_socket.listen(2)
+server_socket.listen(1)
 
 print("The server is ready to receive")
 
-# execution of Router.py pauses here until a socket connects 
-# (Receiver.py line 12) 
-receiver_socket, addr1 = server_socket.accept() 
-print("Receiver connection established")
-
-# execution of Router.py pauses here as well until a 2nd socket connects 
-# (Sender.py line 10)
-sender_socket, addr2 = server_socket.accept()
-print("Sender connection established")
+chat_client_socket, addr = server_socket.accept() 
+print("Chat Client connection established")
 
 while True:
-    # receives a message from sender client
-    # execution pauses here until something is received from the sender
-    # (Sender.py line 17)
+    # receives a message from chat client
     message = sender_socket.recv(1024)
-
-    # forwards message to the receiver
-    receiver_socket.send(message)
-
-    
-    break;
+    print("Message: " + message.decode())
+    chat_client_socket.send("Message received.".encode())
 
 # closes all socket connections
-receiver_socket.close()
-sender_socket.close()
+chat_client_socket.close()
 server_socket.close()
