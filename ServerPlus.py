@@ -2,20 +2,22 @@
 
 from socket import *
 from random import *
+from _thread import *
+import DatabasePlus
 
-
-def sendAll(message, connection): 
-	#go through the list of clients
+#Send to all clients that are connected to the chat
+def sendAll(message, connection, address): 
+    #go through the list of clients
     for clients in list_of_clients: 
-    	#send message to other clients instead of the one who sent the message
+        #send message to other clients instead of the one who sent the message
         if clients!=connection: 
             try: 
-                clients.send(message) 
-                print ("Server sent message")
+                clients.send(message.encode()) 
+                print ("Server sent message from: " + addr[0])
             except: 
                 clients.close()
 
-serverPort = 12000
+serverPort = 12001
 
 # establish server socket as TCP on IPv4 network
 server_socket = socket(AF_INET, SOCK_STREAM)
@@ -31,6 +33,22 @@ list_of_clients = []
 
 print ("Server start. .")
 
+def clients(connection, addr):
+    while True:
+        try:
+            message = connection.recv(1024)
+            if (message != ""):
+                print ("Server received Message from " + addr[0])
+
+                #Here, need to change addr[0] to a username from database
+                send_message = "<" + addr[0] + ">: " + message.decode()
+                sendAll(send_message,connection, addr)
+        except Exception as e:
+            continue
+
+
+
+
 while True:
     connection, addr = server_socket.accept()
     #put connection in list
@@ -38,13 +56,9 @@ while True:
   
     # prints the address of the user that just connected 
     print (addr[0] + " connected")
-    print (list_of_clients)
-
-    message = connection.recv(1024)
-
-    if message:
-    	print ("Server received Message from " + addr[0])
-    	sendAll(message,connection)
+    #print (list_of_clients)
+    #break;
+    start_new_thread(clients,(connection,addr))  
 
 
 

@@ -12,6 +12,7 @@ def receive():
             msg = client_socket.recv(BUFSIZ).decode("utf8")
             msg_list.insert(tkinter.END, msg)
         except OSError:  # Possibly client has left the chat.
+            print("Stopped")
             break
 
 
@@ -20,6 +21,7 @@ def send(event=None):  # event is passed by binders.
     msg = my_msg.get()
     my_msg.set("")  # Clears input field.
     client_socket.send(bytes(msg, "utf8"))
+    msg_list.insert(tkinter.END, "<You>: " + msg)
     if msg == "{quit}":
         client_socket.close()
         top.quit()
@@ -47,14 +49,14 @@ messages_frame.pack()
 entry_field = tkinter.Entry(top, textvariable=my_msg)
 entry_field.bind("<Return>", send)
 entry_field.pack()
-send_button = tkinter.Button(top, text="Send", command=send)
+send_button = tkinter.Button(top, text="Send", command= lambda:send())
 send_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
 #----Now comes the sockets part----
-HOST = input('Enter host: ')
-PORT = input('Enter port: ')
+HOST = "localhost"
+PORT = 12001
 if not PORT:
     PORT = 33000
 else:
