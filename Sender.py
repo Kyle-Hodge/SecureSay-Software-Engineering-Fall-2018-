@@ -1,6 +1,7 @@
 from socket import *
 from tkinter import *
 import DatabasePlus
+from tkinter import scrolledtext
 
 def login_window():
     # create the main login window
@@ -45,24 +46,40 @@ def login_window():
     btn.grid(column = 2, row = 1)
     window.mainloop()
 
-serverName = 'localhost'
-serverPort = 12000
+def chat_window():
+    # create the main chat window
+    window = Tk()
+    window.title("Chat Application Screen")
+    window.geometry("800x800")
 
-# establish client socket as TCP on IPv4 network
-clientSocket = socket(AF_INET, SOCK_STREAM)
+    # creates all the labels on the window
+    chat_log_box_label = Label(window, text = "Chat History")
+    chat_log_box_label.grid(column = 0, row = 0)
+    chat_log_box = scrolledtext.ScrolledText(window, width = 40, height = 10)
+    chat_log_box.grid(column = 0, row = 1)
+    window.mainloop()
 
-# initial TCP connection to server
-clientSocket.connect((serverName, serverPort))
+# serverName = 'localhost'
+# serverPort = 12000
+
+# # establish client socket as TCP on IPv4 network
+# clientSocket = socket(AF_INET, SOCK_STREAM)
+
+# # initial TCP connection to server
+# clientSocket.connect((serverName, serverPort))
 
 # display login GUI
 login_window()
 
-# User input
-messageSend = input("Type in Message: ")
+# display chat GUI
+chat_window()
 
-if messageSend is not None: # if message is not null
-    # message must be encoded first before being sent into the socket
-    clientSocket.send(messageSend.encode())
+# # User input
+# messageSend = input("Type in Message: ")
 
-# closes the socket connection
-clientSocket.close()
+# if messageSend is not None: # if message is not null
+#     # message must be encoded first before being sent into the socket
+#     clientSocket.send(messageSend.encode())
+
+# # closes the socket connection
+# clientSocket.close()
