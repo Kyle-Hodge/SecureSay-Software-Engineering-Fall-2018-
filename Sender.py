@@ -31,7 +31,12 @@ def login_window():
         entered_password = pwd_entry.get()
         res = ""
 
+        #sends username and password to server
+        clientSocket.send(entered_username.encode())
+        clientSocket.send(entered_password.encode())
+
         # this conditional will need to be changed to fetch account credentials from database
+        """
         if DatabasePlus.get_name(entered_username, entered_password):
             res = "Successful login!"
             window.destroy() # exits the login window
@@ -40,7 +45,7 @@ def login_window():
             res = "Invalid credentials. Please try again."
             result_label.configure(text = res)
         result_label.configure(text = res)
-
+"""
     # creates the button to analyze the input
     btn = Button(window, text = "Login", command = login_press)
     btn.grid(column = 2, row = 1)
@@ -62,20 +67,20 @@ def chat_window():
     chat_log_box.grid(column = 0, row = 1)
     window.mainloop()
 
-# serverName = 'localhost'
-# serverPort = 12000
+serverName = 'localhost'
+serverPort = 12000
 
 # # establish client socket as TCP on IPv4 network
-# clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket = socket(AF_INET, SOCK_STREAM)
 
 # # initial TCP connection to server
-# clientSocket.connect((serverName, serverPort))
+clientSocket.connect((serverName, serverPort))
 
 # display login GUI
 login_window()
 
 # display chat GUI
-chat_window()
+# chat_window()
 
 # # User input
 # messageSend = input("Type in Message: ")
@@ -85,4 +90,4 @@ chat_window()
 #     clientSocket.send(messageSend.encode())
 
 # # closes the socket connection
-# clientSocket.close()
+clientSocket.close()
