@@ -46,11 +46,14 @@ def login_window():
     btn.grid(column = 2, row = 1)
     window.mainloop()
 
+
 def chat_window():
     # create the main chat window
     window = Tk()
     window.title("Chat Application Screen")
     window.geometry("800x800")
+
+
 
     # creates all the labels on the window
     chat_log_box_label = Label(window, text = "Chat History")
