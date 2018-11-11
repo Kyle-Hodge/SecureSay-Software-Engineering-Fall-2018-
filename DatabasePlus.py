@@ -24,6 +24,8 @@ def get_name(user, pw):
 	connection = sqlite3.connect('DatabaseFile.db')
 	cursor = connection.cursor()
 	cursor.execute(query, [user, pw])
+	if(user == "" or pw == ""):
+		return False
 	results = cursor.fetchall()
 	cursor.close()
 	connection.close()
