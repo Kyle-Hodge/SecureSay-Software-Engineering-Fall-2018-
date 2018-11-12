@@ -16,7 +16,7 @@ def add_name(user, pw):
 
 		return True
 	except Exception as e:
-		print("Error")
+		print("Error: " + str(e))
 		return False
 
 def get_name(user, pw):
@@ -74,7 +74,8 @@ def get_store_message():
 
 #Insert a new name
 
-#add_name('example.db', ('ahsia', '123'))
+# add_name('ahsia', '123')
+# add_name('xzhou', '123')
 
 #Check it exists
 #print("Username for ahsia: ", get_name('example.db', 'ahsia'))

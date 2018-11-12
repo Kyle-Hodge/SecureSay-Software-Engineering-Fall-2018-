@@ -159,4 +159,7 @@ clientSocket.connect((serverName, serverPort))
 # display login GUI
 login_window()
 
+# display chat GUI
+chat_window()
+
 clientSocket.close()
