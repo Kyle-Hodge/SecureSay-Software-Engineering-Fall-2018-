@@ -72,7 +72,6 @@ def sendUsernames(connection, addr, username):
         gotUsername = connection.recv(1024).decode()
         print("GOT USERNAME: " + gotUsername)
         if gotUsername != "": # make sure it's not empty string
-        
             # check if a table in the DB is established or not. NOTE to avoid clutter in the DB, I made the table names as their combined usernames.
                 # so we must check two instances. For example: there are two users - User1 and User2. Lets say User1 started their communication so the table in DB will be User1User2.
                 # For User2, we don't want to create another table called User2User1, so we must check the table backwards or 'two instances' for User1User2 table. 
@@ -130,14 +129,31 @@ def clients(connection, addr, username, gotUsername):
             connection.close()
 
 def send_oneclient(message, connection, addr, username, gotUsername): 
-    # go through the list of clients
-    # first for loop is for the usernames of the clients
-    for clients in unique_id: 
-        # second for loop is for the connection of the clients
-        for value in unique_id.values():
+    # create a new dictionary - to only hold the connection of who is communicating to one another
+    new_dictionary = {}
+    new_dictionary.clear() # clear dictionary again just in case
+
+    # go through the list of clients and only obtain the clients who are talking to each other that are connected.
+    # To confirm that we get the same corresponding client with connection together
+    for client, value in unique_id.items():
+        # One client to obtain
+        if client == gotUsername: 
+            new_dictionary.update({client: value}) # update the nenw dictionary with the client's dictionary values. Ex: 'ahsia': <socket>
+        # Another client to obtain
+        elif client == username:
+            new_dictionary.update({client: value}) # update (add) to new dictionary
+        elif client == gotUsername and client == username:
+            new_dictionary.update({client: value})
+
+    # Send messages
+    # First for loop is for the usernames of the clients
+    for clients in new_dictionary:
+        # Second for loop is for the connection of the clients
+        for value in new_dictionary.values():
             # send message to the other client instead of the one who sent the message
-            if clients == gotUsername and value != connection and clients != username: 
+            if clients == gotUsername and value!=connection and clients != username: 
                 try: 
+                    print ("TO:" + clients)
                     # The message that the Server will send to Client (Receiver)
                     send_message = "<" + username + ">: " + message
                     # Send message to Client (Receivers)
@@ -146,15 +162,26 @@ def send_oneclient(message, connection, addr, username, gotUsername):
                     break
                 except: 
                     value.close()
+
             # send message to the one who sent the message
             elif clients == username and value == connection and clients != gotUsername:
                 try:
+                    print("FROM: " + clients)
                     send_message = "<You>: " + message
-                    value.send(send_message.encode())
+                    value.send(send_message.encode()) # send message to client
                     break
                 except:
                     value.close()
-        
+            elif clients == username and clients == gotUsername and value == connection: # messaging yourself
+                try:
+                    print("Messaging Yourself" + clients)
+                    send_message = "<self_message>: " + message
+                    value.send(send_message.encode()) # send message to client
+                except Exception as e:
+                    print (e)
+    print(new_dictionary)
+    new_dictionary.clear() # clear dictionary to make other clients have their own dictionary
+    print(new_dictionary)
 
 serverPort = 12000
 
