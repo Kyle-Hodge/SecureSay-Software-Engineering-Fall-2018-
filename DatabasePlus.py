@@ -32,9 +32,34 @@ def get_name(user, pw):
 
 	return results
 
-def get_table():
+def print_name():
+	query = "SELECT username FROM users;"
+	connection = sqlite3.connect('DatabaseFile.db')
+	cursor = connection.cursor()
+	cursor.execute(query)
+	results = cursor.fetchall()
+	cursor.close()
+	connection.close()
+
+	return results
+
+def check_table(sender, receiver):
 	try:
-		query = "CREATE TABLE messages (id integer primary key autoincrement, username char(12) NOT NULL, message char(50) NOT NULL);"
+		query = "SELECT username FROM " + sender + receiver + ";"
+		connection = sqlite3.connect('DatabaseFile.db')
+		cursor = connection.cursor()
+		cursor.execute(query)
+		cursor.close()
+		connection.commit()
+		connection.close()
+
+		return True
+	except Exception as e:
+		return False
+
+def get_table(sender, receiver):
+	try:
+		query = "CREATE TABLE " + sender + receiver + " ( id integer primary key autoincrement, username char(12) NOT NULL, message char(50) NOT NULL);"
 		connection = sqlite3.connect('DatabaseFile.db')
 		cursor = connection.cursor()
 		cursor.execute(query)
@@ -46,9 +71,9 @@ def get_table():
 	except:
 		return False
 
-def store_message(user, message):
+def store_message(sender, receiver, user, message):
 	try:
-		query = "INSERT INTO messages (username, message) VALUES (?, ?);"
+		query = "INSERT INTO " + sender + receiver + " (username, message) VALUES (?, ?);"
 		connection = sqlite3.connect('DatabaseFile.db')
 		cursor = connection.cursor()
 		cursor.execute(query, (user, message))
@@ -60,8 +85,8 @@ def store_message(user, message):
 	except Exception as e:
 		return False
 
-def get_store_message():
-	query = "SELECT username,message FROM messages WHERE id > 0;"
+def get_store_message(sender, receiver):
+	query = "SELECT username,message FROM " + sender + receiver + " WHERE id > 0;"
 	connection = sqlite3.connect('DatabaseFile.db')
 	cursor = connection.cursor()
 	cursor.execute(query)
