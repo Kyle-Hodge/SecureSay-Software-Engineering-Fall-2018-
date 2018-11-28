@@ -83,6 +83,8 @@ def sendUsernames(connection, addr, username):
                 print ("TABLE IS NOT THERE BUT IS GOING TO BE ESTABLISHED")
                 DatabasePlus.get_table(username, gotUsername)
                 print ("Table Established in DB")
+                # move on to the start of the messaging between Users
+                clients(connection, addr, username, gotUsername)
 
     except Exception as e:
         print(e)
