@@ -5,7 +5,7 @@
                      
                      NEW 
                      - Added Create Account button (No back button so you must create an account in order to go to LOGIN GUI)
-                     	- No back button for Login GUI as well
+                        - No back button for Login GUI as well
                      - Added a contacts GUI that will print out ALL users in DB (so client can also message themselves)
                      - This now ONLY supports two-way communication and does NOT support a 'chat room' style anymore.
 """
@@ -16,6 +16,18 @@ from threading import Thread
 import time
 import datetime
 
+def encryption1(string):
+    encrypted_string = ''
+    for i in range(len(string)):
+        encrypted_string += (chr(ord(string[i]) + 1))
+    return encrypted_string
+
+def decryption1(string):
+    decrypted_string = ''
+    for i in range(len(string)):
+        decrypted_string += (chr(ord(string[i]) - 1))
+    return decrypted_string    
+
 def login_window():
     # create the main login window
     window = Tk()
@@ -25,146 +37,146 @@ def login_window():
 
     # create account method
     def create_account():
-	    btnLogin.grid_remove()
-	    btnCreate.grid_remove()
-	    window.title("Create Account Screen")
-	    # Differentiate when user is creating account or logging in
-	    clientSocket.send("Creating_Account".encode())
+        btnLogin.grid_remove()
+        btnCreate.grid_remove()
+        window.title("Create Account Screen")
+        # Differentiate when user is creating account or logging in
+        clientSocket.send("Creating_Account".encode())
 
-		# creates all the labels on the window
-	    user_label = Label(window, text = "Enter a Username: ", bg = 'black', fg = 'white')
-	    user_label.grid(column = 0, row = 0)
-	    pwd_label = Label(window, text = "Enter a Password: ")
-	    pwd_label.grid(column = 0, row = 1)
-	    status_label = Label(window, text = "Status: ")
-	    status_label.grid(column = 0, row = 2)
-	    result_label = Label(window, text = "Create credentials")
-	    result_label.grid(column = 1, row = 2)
+        # creates all the labels on the window
+        user_label = Label(window, text = "Enter a Username: ", bg = 'black', fg = 'white')
+        user_label.grid(column = 0, row = 0)
+        pwd_label = Label(window, text = "Enter a Password: ")
+        pwd_label.grid(column = 0, row = 1)
+        status_label = Label(window, text = "Status: ")
+        status_label.grid(column = 0, row = 2)
+        result_label = Label(window, text = "Create credentials")
+        result_label.grid(column = 1, row = 2)
 
-	    # Display creation label when successfully created an account 
-	    result_label_CREATION = Label(window, text = "", bg = "#ECD875")
-	    result_label_CREATION.grid(column = 1, row = 4)
+        # Display creation label when successfully created an account 
+        result_label_CREATION = Label(window, text = "", bg = "#ECD875")
+        result_label_CREATION.grid(column = 1, row = 4)
 
-	    # creates the username and password entry boxes
-	    user_entry = Entry(window, width = 10)
-	    user_entry.grid(column = 1, row = 0)
-	    pwd_entry = Entry(window, width = 10)
-	    pwd_entry.grid(column = 1, row = 1)
+        # creates the username and password entry boxes
+        user_entry = Entry(window, width = 10)
+        user_entry.grid(column = 1, row = 0)
+        pwd_entry = Entry(window, width = 10)
+        pwd_entry.grid(column = 1, row = 1)
 
-	    # checks if username is available
-	    def create_press():
-	        entered_username = user_entry.get()
-	        entered_password = pwd_entry.get()
-	        res = ""
+        # checks if username is available
+        def create_press():
+            entered_username = user_entry.get()
+            entered_password = pwd_entry.get()
+            res = ""
 
-	        get_bool = False
+            get_bool = False
 
-	        # When user input is not empty, send username/password to server
-	        if entered_username and entered_password != "":
-	            get_bool = True
-	            # send username and password to server
-	            clientSocket.send(entered_username.encode())
-	            clientSocket.send(entered_password.encode())
-	        # else when one input is empty, Try Again
-	        else:
-	            print("Enter more info in username/password")
-	            res = "Fill in a username and password"
-	            get_bool = False
-	            result_label.configure(text = res)
+            # When user input is not empty, send username/password to server
+            if entered_username and entered_password != "":
+                get_bool = True
+                # send username and password to server
+                clientSocket.send(entered_username.encode())
+                clientSocket.send(entered_password.encode())
+            # else when one input is empty, Try Again
+            else:
+                print("Enter more info in username/password")
+                res = "Fill in a username and password"
+                get_bool = False
+                result_label.configure(text = res)
 
-	        # Enter if statement when sent username/password to server
-	        if get_bool is True:
-	            # Receive a message from Server that either says "Added_Account_In_DB" or "Try_Again"
-	            correct_statement = clientSocket.recv(1024)
+            # Enter if statement when sent username/password to server
+            if get_bool is True:
+                # Receive a message from Server that either says "Added_Account_In_DB" or "Try_Again"
+                correct_statement = clientSocket.recv(1024)
 
-	            # Enter if statement when message from server equals to 'Added_Account_In_DB'
-	            if correct_statement.decode() == "Added_Account_In_DB": # Username & Password is created in Database
-	                print("Created Account!")
-	                res = "Successful Account Creation!"
-	                result_label_CREATION.configure(text = res)
-	                Login() # Goes to Login GUI when successfully created an account
+                # Enter if statement when message from server equals to 'Added_Account_In_DB'
+                if correct_statement.decode() == "Added_Account_In_DB": # Username & Password is created in Database
+                    print("Created Account!")
+                    res = "Successful Account Creation!"
+                    result_label_CREATION.configure(text = res)
+                    Login() # Goes to Login GUI when successfully created an account
 
-	                # Remove components from the create_press GUI so there won't be any clutter in the next GUI
-	                btn.grid_remove();
-	                result_label.grid_remove()
-	                status_label.grid_remove()
-	                pwd_label.grid_remove()
-	                user_label.grid_remove()
+                    # Remove components from the create_press GUI so there won't be any clutter in the next GUI
+                    btn.grid_remove();
+                    result_label.grid_remove()
+                    status_label.grid_remove()
+                    pwd_label.grid_remove()
+                    user_label.grid_remove()
 
-	            # ELSE, Username is taken - Try Again
-	            else:
-	                print("Cannot add account. Username Taken")
-	                res = "Username Taken."
-	                result_label.configure(text = res)
+                # ELSE, Username is taken - Try Again
+                else:
+                    print("Cannot add account. Username Taken")
+                    res = "Username Taken."
+                    result_label.configure(text = res)
 
-	    btn = Button(window, text = "Submit", command = create_press)
-	    btn.grid(column = 3, row = 3)
+        btn = Button(window, text = "Submit", command = create_press)
+        btn.grid(column = 3, row = 3)
 
-	# Login method
+    # Login method
     def Login():
-	    btnLogin.grid_remove()
-	    btnCreate.grid_remove()
-	    window.title("Login Screen")
-	    # Differentiate when user is creating account or logging in
-	    clientSocket.send("Logging_In".encode())
+        btnLogin.grid_remove()
+        btnCreate.grid_remove()
+        window.title("Login Screen")
+        # Differentiate when user is creating account or logging in
+        clientSocket.send("Logging_In".encode())
 
-	    # creates all the labels on the window
-	    user_label = Label(window, text = "Username: ")
-	    user_label.grid(column = 0, row = 0)
-	    pwd_label = Label(window, text = "Password: ")
-	    pwd_label.grid(column = 0, row = 1)
-	    status_label = Label(window, text = "Status: ")
-	    status_label.grid(column = 0, row = 2)
-	    result_label = Label(window, text = "Enter credentials")
-	    result_label.grid(column = 1, row = 2)
+        # creates all the labels on the window
+        user_label = Label(window, text = "Username: ")
+        user_label.grid(column = 0, row = 0)
+        pwd_label = Label(window, text = "Password: ")
+        pwd_label.grid(column = 0, row = 1)
+        status_label = Label(window, text = "Status: ")
+        status_label.grid(column = 0, row = 2)
+        result_label = Label(window, text = "Enter credentials")
+        result_label.grid(column = 1, row = 2)
 
-	    # creates the username and password entry boxes
-	    user_entry = Entry(window, width = 10)
-	    user_entry.grid(column = 1, row = 0)
-	    pwd_entry = Entry(window, show="*", width = 10)
-	    pwd_entry.grid(column = 1, row = 1)
+        # creates the username and password entry boxes
+        user_entry = Entry(window, width = 10)
+        user_entry.grid(column = 1, row = 0)
+        pwd_entry = Entry(window, show="*", width = 10)
+        pwd_entry.grid(column = 1, row = 1)
 
-	    # checks if the credentials are correct
-	    def login_press():
-	        entered_username = user_entry.get()
-	        entered_password = pwd_entry.get()
-	        res = ""
+        # checks if the credentials are correct
+        def login_press():
+            entered_username = user_entry.get()
+            entered_password = pwd_entry.get()
+            res = ""
 
-	        get_bool = False
+            get_bool = False
 
-	        # When user input is not empty, send username/password to server
-	        if entered_username and entered_password != "":
-	            get_bool = True
-	            # send username and password to server
-	            clientSocket.send(entered_username.encode())
-	            clientSocket.send(entered_password.encode())
-	        # else when one input is empty, Try Again
-	        else:
-	            print("Enter more info in username/password")
-	            res = "Fill in a username and password"
-	            get_bool = False
-	            result_label.configure(text = res)
+            # When user input is not empty, send username/password to server
+            if entered_username and entered_password != "":
+                get_bool = True
+                # send username and password to server
+                clientSocket.send(entered_username.encode())
+                clientSocket.send(entered_password.encode())
+            # else when one input is empty, Try Again
+            else:
+                print("Enter more info in username/password")
+                res = "Fill in a username and password"
+                get_bool = False
+                result_label.configure(text = res)
 
-	        # Enter if statement when sent username/password to server
-	        if get_bool is True:
-	            # Receive a message from Server that either says "Correct_Information" or "Try_Again"
-	            correct_statement = clientSocket.recv(1024)
+            # Enter if statement when sent username/password to server
+            if get_bool is True:
+                # Receive a message from Server that either says "Correct_Information" or "Try_Again"
+                correct_statement = clientSocket.recv(1024)
 
-	            # Enter if statement when message from server equals to 'Correct_Information'
-	            if correct_statement.decode() == "Correct_Information": # Username & Password is confirmed in Database
-	                res = "Successful login!"
-	                result_label.configure(text = res)
-	                window.destroy() # exits the login window
-	                clients_window() # Display chat GUI
-	            # ELSE, Username/Password is incorrect - Try Again
-	            else:
-	                print("Incorrect username/password")
-	                res = "Invalid credentials. Please try again."
-	                result_label.configure(text = res)
-	        
+                # Enter if statement when message from server equals to 'Correct_Information'
+                if correct_statement.decode() == "Correct_Information": # Username & Password is confirmed in Database
+                    res = "Successful login!"
+                    result_label.configure(text = res)
+                    window.destroy() # exits the login window
+                    clients_window() # Display chat GUI
+                # ELSE, Username/Password is incorrect - Try Again
+                else:
+                    print("Incorrect username/password")
+                    res = "Invalid credentials. Please try again."
+                    result_label.configure(text = res)
+            
 
-	    btn = Button(window, text = "Submit", command = login_press)
-	    btn.grid(column = 2, row = 3)
+        btn = Button(window, text = "Submit", command = login_press)
+        btn.grid(column = 2, row = 3)
 
     btnLogin = Button(window, text = "Login", command = Login, bg = "blue", fg="white")
     btnLogin.grid(column = 2, row = 1)
@@ -182,7 +194,7 @@ def clients_window():
 
     # Create a Tkinter variable
     tkvar = StringVar(window)
- 	# Receive the list of Users
+    # Receive the list of Users
     choices = clientSocket.recv(1024).decode()
 
     # The list of users will be received as a ONE LONG STRING
@@ -208,13 +220,13 @@ def clients_window():
 
     # When User wants to message a certain somebody
     def clicked_message():
-    	if tkvar.get() != "":
-    		clientSocket.send(tkvar.get().encode())
-    		print("Sent to Server!")
-    		window.destroy()
-    		chat_window()
-    	else:
-    		print("It is empty. Select a User from the dropdown")
+        if tkvar.get() != "":
+            clientSocket.send(tkvar.get().encode())
+            print("Sent to Server!")
+            window.destroy()
+            chat_window()
+        else:
+            print("It is empty. Select a User from the dropdown")
 
 
     btn = Button(window, text = "message", command = clicked_message).grid(column = 2, row = 2)
@@ -249,7 +261,8 @@ def chat_window():
         
         if msg != "" and msg != "{quit}":
             # send user input to server
-            clientSocket.send((msg + " [" + datetime.datetime.now().strftime('%I:%M%p') + "]").encode())
+            msg += " [" + datetime.datetime.now().strftime('%I:%M%p') + "]"
+            clientSocket.send(encryption1(msg).encode())
             # Make chat_log_box enabled to input text
             chat_log_box.configure(state = NORMAL)
             # Make scrollbar auto scroll to most recent message
@@ -275,7 +288,7 @@ def chat_window():
                 # Make chat_log_box enabled to input text
                 chat_log_box.configure(state = NORMAL)
                 # insert message that was sent from another User into chat log
-                chat_log_box.insert(END, msg.decode() + "\n")
+                chat_log_box.insert(END, decryption1(msg.decode()) + "\n")
                 # Make scrollbar auto scroll to most recent message
                 chat_log_box.see(END)
                 # Make chat_log_box disabled to prohibit user input
