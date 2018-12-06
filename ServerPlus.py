@@ -5,6 +5,12 @@ from random import *
 from _thread import *
 import DatabasePlus
 
+def encryption1(string):
+    encrypted_string = ''
+    for i in range(len(string)):
+        encrypted_string += (chr(ord(string[i]) + 1))
+    return encrypted_string
+
 # Method to determine Login from Database
 def confirm_user_DB(connection, addr):
     while True:
@@ -92,20 +98,21 @@ def sendUsernames(connection, addr, username):
 
 
 def clients(connection, addr, username, gotUsername):
+    encrypt_spacing = encryption1("\n")
     # check if table is in DB (Should be there already from previous method but we need to see which order the Usernames of the table are in)
     if DatabasePlus.check_table(gotUsername, username) == True or DatabasePlus.check_table(username, gotUsername) == True:
         # Check two instances since there are two ways there can be a table - First instance: 
         if DatabasePlus.check_table(gotUsername, username) == True: 
             # Go through the TUPLE list of the (username, message) from the DB and send those messages to the chat logs box.
             for x in DatabasePlus.get_store_message(gotUsername, username):
-                message = "<" + x[0] + ">: " + x[1] + "\n"
+                message = x[0] + x[1] + encrypt_spacing
                 connection.send(message.encode()) # send to client
 
         # Second instance:
         elif DatabasePlus.check_table(username, gotUsername) == True:
             # Go through the TUPLE list of the (username, message) from the DB and send those messages to the chat logs box.
             for x in DatabasePlus.get_store_message(username, gotUsername):
-                message = "<" + x[0] + ">: " + x[1] + "\n"
+                message = x[0] + x[1] + encrypt_spacing
                 connection.send(message.encode()) # send to client
 
     
@@ -116,13 +123,15 @@ def clients(connection, addr, username, gotUsername):
             message = connection.recv(1024)
             if (message.decode() != ""):
                 print ("Server received Message from " + username)
+                encrypt_U = encryption1("<"+username+">: ")
+                encrypt_offline = encryption1("<has went offline>")
 
                 # Store the message that the Client (Sender) sent along with the username if it's not the message <has went offline>
                 # There is also two instances of a table in DB to save their messages:
-                if message.decode() != "<has went offline>" and DatabasePlus.check_table(gotUsername, username) == True:
-                    DatabasePlus.store_message(gotUsername, username, username, message.decode())
-                elif message.decode() != "<has went offline>" and DatabasePlus.check_table(username, gotUsername) == True:
-                    DatabasePlus.store_message(username, gotUsername, username, message.decode())
+                if message.decode() != encrypt_offline and DatabasePlus.check_table(gotUsername, username) == True:
+                    DatabasePlus.store_message(gotUsername, username, encrypt_U, message.decode())
+                elif message.decode() != encrypt_offline and DatabasePlus.check_table(username, gotUsername) == True:
+                    DatabasePlus.store_message(username, gotUsername, encrypt_U, message.decode())
 
                 # Send message for SYNCHRONOUS messaging in chat room
                 send_oneclient(message.decode(),connection, addr, username, gotUsername)
@@ -157,7 +166,8 @@ def send_oneclient(message, connection, addr, username, gotUsername):
                 try: 
                     print ("TO:" + clients)
                     # The message that the Server will send to Client (Receiver)
-                    send_message = "<" + username + ">: " + message
+                    encode_message = encryption1(("<" + username + ">: "))
+                    send_message = encode_message + message
                     # Send message to Client (Receivers)
                     value.send(send_message.encode()) 
                     print ("Server sent message from: " + username)
@@ -169,7 +179,8 @@ def send_oneclient(message, connection, addr, username, gotUsername):
             elif clients == username and value == connection and clients != gotUsername:
                 try:
                     print("FROM: " + clients)
-                    send_message = "<You>: " + message
+                    encode_message = encryption1(("<You>: "))
+                    send_message = encode_message + message
                     value.send(send_message.encode()) # send message to client
                     break
                 except:
@@ -177,7 +188,8 @@ def send_oneclient(message, connection, addr, username, gotUsername):
             elif clients == username and clients == gotUsername and value == connection: # messaging yourself
                 try:
                     print("Messaging Yourself" + clients)
-                    send_message = "<self_message>: " + message
+                    encode_message = encryption1(("<self_message>: "))
+                    send_message = encode_message + message
                     value.send(send_message.encode()) # send message to client
                 except Exception as e:
                     print (e)

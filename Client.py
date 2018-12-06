@@ -272,7 +272,7 @@ def chat_window():
 
         # typing {quit} in chat input will exit the client
         if msg == "{quit}":
-            clientSocket.send(("<has went offline>").encode())
+            clientSocket.send(encryption1(("<has went offline>")).encode())
             clientSocket.close()
             window.destroy()
 
